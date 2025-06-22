@@ -1,5 +1,4 @@
 .main {
   composes: container from global;
   padding-top: 100px;
-  height: 100dvh;
 }

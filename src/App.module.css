@@ -13,8 +13,6 @@ body {
 }
 
 .app {
-  width: 100dvw;
-  height: 100dvh;
   position: relative;
 }
 /* Общие стили для компонентов */

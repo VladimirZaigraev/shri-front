@@ -10,4 +10,5 @@
   grid-template-columns: repeat(2, 1fr);
   row-gap: 10px;
   column-gap: 40px;
+  overflow: hidden;
 }
