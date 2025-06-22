@@ -5,13 +5,20 @@ import cn from "classnames";
 
 import Loader from "../Loader";
 
-type Type = "error" | "done" | "loading" | "process" | "active";
+enum Type {
+  error = "error",
+  done = "done",
+  loading = "loading",
+  process = "process",
+  active = "active",
+}
 
 interface UploadButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type"> {
   title?: string;
   onClose?: () => void;
   type: Type;
   subtitle?: string;
+  disabled?: boolean;
 }
 
 const TYPE_COLOR = {
@@ -23,7 +30,7 @@ const TYPE_COLOR = {
 };
 
 const TITLE = {
-  error: "Error",
+  error: "Ошибка",
   done: "Done!",
   loading: "Parsing file...",
   process: "File uploaded!",
@@ -38,18 +45,25 @@ const SUBTITLE = {
 };
 
 export const UploadButton: FC<UploadButtonProps> = (props) => {
-  const { title, onClose, type, subtitle, ...rest } = props;
+  const { title, onClose, type, subtitle, disabled = true, ...rest } = props;
+
   return (
     <div className={styles.uploadButton}>
       <div className={styles.uploadButton__wrapper}>
-        <button className={cn(styles.uploadButton__button, styles[TYPE_COLOR[type]])} {...rest}>
+        <button
+          disabled={disabled}
+          className={cn(styles.uploadButton__button, styles[TYPE_COLOR[type]], styles[type], {})}
+          {...rest}
+        >
           {type === "loading" ? <Loader size="lg" /> : title || TITLE[type]}
         </button>
         {type !== "loading" && (
           <IconButton icon="proicons-cancel" size="lg" ariaLabel="close" color="black" onClick={onClose} />
         )}
       </div>
-      <span className={styles.uploadButton__subtitle}>{subtitle || SUBTITLE[type]}</span>
+      <span className={cn(styles.uploadButton__subtitle, type === Type.error && styles.uploadButton__subtitle_error)}>
+        {subtitle || SUBTITLE[type]}
+      </span>
     </div>
   );
 };

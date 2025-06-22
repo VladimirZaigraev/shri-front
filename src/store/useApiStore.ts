@@ -130,7 +130,7 @@ export const useApiStore = create<ApiState & ApiActions>((set, get) => ({
 
         const link = document.createElement("a");
         link.href = url;
-        link.download = filename || "report.csv";
+        link.download = filename || "file_uploaded.csv";
         link.style.position = "fixed";
         link.style.left = "-9999px";
 

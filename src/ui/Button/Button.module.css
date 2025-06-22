@@ -67,11 +67,26 @@
   justify-content: center;
 }
 
+.uploadButton__button:disabled {
+  cursor: not-allowed;
+}
+
 .uploadButton__subtitle {
   composes: text-base-regular from global;
   color: var(--color-black);
 }
 
+.uploadButton__subtitle_error {
+  color: var(--color-orange);
+}
+
+.error {
+  min-width: fit-content;
+}
+
+.done {
+  min-width: fit-content;
+}
 /* Цветовые варианты */
 .green {
   background-color: var(--color-green);
@@ -127,6 +142,10 @@
   background-color: var(--color-primary, #c5e1ff);
 }
 
+.light-green {
+  background-color: var(--color-green-light);
+  color: var(--color-black);
+}
 /* Состояние disabled */
 .disabled {
   background-color: var(--color-gray-light, #e0e0e0) !important;
