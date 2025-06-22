@@ -12,7 +12,7 @@ const NAV_LIST: NavListItemProps[] = [
     icon: "mage-upload",
   },
   {
-    title: "CSV Генератор           ",
+    title: "CSV Генератор",
     path: "csv-generator",
     icon: "metric-job",
   },

@@ -4,5 +4,6 @@ import Loader from "./Loader";
 import ErrorBoundary from "./ErrorBoundary";
 import PageWrapper from "./PageWrapper";
 import NavList from "./NavList";
+import HighlightList from "./HighlightList";
 
-export { Icon, BaseButton, IconButton, Loader, ErrorBoundary, PageWrapper, NavList, UploadButton };
+export { Icon, BaseButton, IconButton, Loader, ErrorBoundary, PageWrapper, NavList, UploadButton, HighlightList };

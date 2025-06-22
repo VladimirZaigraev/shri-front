@@ -12,7 +12,7 @@ export const CsvGenerator = () => {
   const { downloadReport, generateReport, generateReportLoading, reports, clearReportData } = useApiStore();
 
   const handleGenerate = async () => {
-    const res = await generateReport({ size: 0.01, withErrors: "off", maxSpend: 1000 });
+    const res = await generateReport({ size: 0.001, withErrors: "off", maxSpend: 1000 });
     console.log(res);
     if (res) {
       handleDownload();

@@ -91,11 +91,60 @@ export class ApiClient {
   }
 
   // POST запрос
-  public async post<T>(endpoint: string, data?: unknown): Promise<T> {
+  public async post<T>(endpoint: string, data?: unknown, options?: { body: FormData }): Promise<T> {
     return this.request<T>(endpoint, {
       method: "POST",
       body: data ? JSON.stringify(data) : undefined,
+      ...options,
     });
+  }
+
+  // POST запрос для потоковых данных (возвращает Response без обработки)
+  public async postStream(
+    endpoint: string,
+    params?: Record<string, unknown>,
+    options?: { body: FormData; headers?: Record<string, string> }
+  ): Promise<Response> {
+    let url = `${this.config.baseURL}${endpoint}`;
+
+    if (params) {
+      const searchParams = new URLSearchParams();
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          searchParams.append(key, String(value));
+        }
+      });
+
+      if (searchParams.toString()) {
+        url += `?${searchParams.toString()}`;
+      }
+    }
+
+    const requestOptions: RequestInit = {
+      method: "POST",
+      headers: {
+        ...this.config.headers,
+        ...options?.headers,
+      },
+      body: options?.body,
+    };
+
+    const response = await fetch(url, requestOptions);
+
+    if (!response.ok) {
+      let errorMessage = `HTTP Error: ${response.status}`;
+
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || errorMessage;
+      } catch {
+        errorMessage = response.statusText || errorMessage;
+      }
+
+      throw new ApiError(errorMessage, response.status, response);
+    }
+
+    return response;
   }
 }
 

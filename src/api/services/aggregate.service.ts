@@ -10,8 +10,32 @@ export class AggregateService {
    * @param params - параметры для агрегации
    * @returns Promise с агрегированными данными
    */
-  static async aggregateData(params: AggregateParams): Promise<AggregateResponse> {
-    return apiClient.post<AggregateResponse>("/aggregate", params);
+  static async aggregateData(params: AggregateParams, body: FormData): Promise<AggregateResponse> {
+    return apiClient.post<AggregateResponse>("/aggregate", params, { body });
+  }
+
+  /**
+   * Потоковая агрегация данных
+   * @param file - файл для обработки
+   * @param rows - количество строк для обработки
+   * @returns Response для чтения потока
+   */
+  static async aggregateDataStream(file: File, rows: number): Promise<Response> {
+    // Валидация параметров
+    const validation = this.validateAggregateParams({ rows });
+    if (!validation.isValid) {
+      throw new Error(`Ошибки валидации: ${validation.errors.join(", ")}`);
+    }
+
+    // Валидация файла
+    if (!file) {
+      throw new Error("Файл обязателен для агрегации");
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return apiClient.postStream("/aggregate", { rows }, { body: formData });
   }
 
   /**

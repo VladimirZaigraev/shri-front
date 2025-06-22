@@ -5,7 +5,7 @@ import cn from "classnames";
 
 import Loader from "../Loader";
 
-enum Type {
+export enum Type {
   error = "error",
   done = "done",
   loading = "loading",
@@ -57,7 +57,7 @@ export const UploadButton: FC<UploadButtonProps> = (props) => {
         >
           {type === "loading" ? <Loader size="lg" /> : title || TITLE[type]}
         </button>
-        {type !== "loading" && (
+        {type !== "loading" && type !== "active" && (
           <IconButton icon="proicons-cancel" size="lg" ariaLabel="close" color="black" onClick={onClose} />
         )}
       </div>

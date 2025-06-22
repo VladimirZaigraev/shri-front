@@ -8,7 +8,6 @@ interface ModalData {
 interface ModalState {
   isOpen: boolean;
   modalData: ModalData | null;
-  modalType?: string;
   // Дополнительные поля для расширенной функциональности
   modalId?: string;
   isClosable?: boolean;
@@ -19,7 +18,6 @@ interface ModalActions {
   openModal: (
     modalData: ModalData,
     options?: {
-      modalType?: string;
       modalId?: string;
       isClosable?: boolean;
       onClose?: () => void;
@@ -27,14 +25,12 @@ interface ModalActions {
   ) => void;
   closeModal: () => void;
   updateModalData: (data: Partial<ModalData>) => void;
-  setModalType: (type: string) => void;
 }
 
 export const useModalStore = create<ModalState & ModalActions>((set, get) => ({
   // Начальное состояние
   isOpen: false,
   modalData: null,
-  modalType: undefined,
   modalId: undefined,
   isClosable: true,
   onClose: undefined,
@@ -44,7 +40,6 @@ export const useModalStore = create<ModalState & ModalActions>((set, get) => ({
     set({
       isOpen: true,
       modalData,
-      modalType: options.modalType,
       modalId: options.modalId,
       isClosable: options.isClosable ?? true,
       onClose: options.onClose,
@@ -63,7 +58,6 @@ export const useModalStore = create<ModalState & ModalActions>((set, get) => ({
     set({
       isOpen: false,
       modalData: null,
-      modalType: undefined,
       modalId: undefined,
       isClosable: true,
       onClose: undefined,
@@ -76,10 +70,5 @@ export const useModalStore = create<ModalState & ModalActions>((set, get) => ({
     set({
       modalData: currentData ? { ...currentData, ...data } : data,
     });
-  },
-
-  // Изменение типа модала
-  setModalType: (type) => {
-    set({ modalType: type });
   },
 }));

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { api, ErrorHandler } from "../api";
-import type { ReportParams, AggregateParams, ApiErrorResponse } from "../api";
+import type { ReportParams, AggregateParams, ApiErrorResponse, AggregateResponse } from "../api";
+import { useHistoryStore } from "./useHistoryStore";
 
 // Состояние store
 interface ApiState {
@@ -16,10 +17,14 @@ interface ApiState {
 
   // Данные и ошибки для агрегации
   aggregate: {
-    data: unknown | null;
+    data: AggregateResponse | null;
     error: ApiErrorResponse | null;
+    isStreaming: boolean; // Флаг потокового режима
   };
 }
+
+// Callback для обновления агрегации
+type ProgressCallback = (intermediateData?: AggregateResponse) => void;
 
 // Actions для store
 interface ApiActions {
@@ -28,7 +33,17 @@ interface ApiActions {
   downloadReport: (params: ReportParams, filename?: string) => Promise<void>;
 
   // Операции с агрегацией
-  aggregateData: (params: AggregateParams) => Promise<unknown | null>;
+  aggregateData: (
+    params: AggregateParams,
+    body: FormData,
+    onProgress?: ProgressCallback
+  ) => Promise<AggregateResponse | null>;
+
+  // Потоковая агрегация данных
+  aggregateDataStream: (file: File, rows: number, onProgress?: ProgressCallback) => Promise<AggregateResponse | null>;
+
+  // Обновление промежуточных данных агрегации
+  updateAggregateData: (data?: AggregateResponse) => void;
 
   // Очистка данных
   clearReportData: () => void;
@@ -49,6 +64,7 @@ export const useApiStore = create<ApiState & ApiActions>((set, get) => ({
   aggregate: {
     data: null,
     error: null,
+    isStreaming: false,
   },
 
   // Генерация отчета
@@ -157,8 +173,12 @@ export const useApiStore = create<ApiState & ApiActions>((set, get) => ({
     }
   },
 
-  // Агрегация данных
-  aggregateData: async (params: AggregateParams): Promise<unknown | null> => {
+  // Агрегация данных (устаревший метод, для совместимости)
+  aggregateData: async (
+    params: AggregateParams,
+    body: FormData,
+    onProgress?: ProgressCallback
+  ): Promise<AggregateResponse | null> => {
     // Если уже загружается - выходим
     if (get().aggregateDataLoading) {
       return null;
@@ -167,7 +187,7 @@ export const useApiStore = create<ApiState & ApiActions>((set, get) => ({
     // Начинаем загрузку
     set({
       aggregateDataLoading: true,
-      aggregate: { data: null, error: null },
+      aggregate: { data: null, error: null, isStreaming: false },
     });
 
     try {
@@ -178,13 +198,17 @@ export const useApiStore = create<ApiState & ApiActions>((set, get) => ({
       }
 
       // Выполняем запрос
-      const result = await api.aggregate.aggregateData(params);
+      const result = await api.aggregate.aggregateData(params, body);
 
       // Успешное завершение
       set({
         aggregateDataLoading: false,
-        aggregate: { data: result, error: null },
+        aggregate: { data: result, error: null, isStreaming: false },
       });
+
+      if (onProgress) {
+        onProgress(result);
+      }
 
       return result;
     } catch (error) {
@@ -192,13 +216,191 @@ export const useApiStore = create<ApiState & ApiActions>((set, get) => ({
       const errorInfo = ErrorHandler.handleApiError(error);
       ErrorHandler.logError(error, "AggregateData");
 
+      // Сохранение ошибки в историю
+      const file = body.get("file") as File;
+      const fileName = file?.name || "unknown_file";
+      useHistoryStore.getState().addItem({
+        fileName,
+        timestamp: new Date().toISOString(),
+        result: null,
+        status: "error",
+        error: errorInfo.message || "Ошибка обработки файла",
+      });
+
       set({
         aggregateDataLoading: false,
-        aggregate: { data: null, error: errorInfo },
+        aggregate: { data: null, error: errorInfo, isStreaming: false },
       });
 
       return null;
     }
+  },
+
+  // Потоковая агрегация данных
+  aggregateDataStream: async (
+    file: File,
+    rows: number,
+    onProgress?: ProgressCallback
+  ): Promise<AggregateResponse | null> => {
+    // Если уже загружается - выходим
+    if (get().aggregateDataLoading) {
+      return null;
+    }
+
+    // Начинаем потоковую загрузку
+    set({
+      aggregateDataLoading: true,
+      aggregate: { data: null, error: null, isStreaming: true },
+    });
+
+    try {
+      // Выполняем потоковый запрос через сервис
+      const response = await api.aggregate.aggregateDataStream(file, rows);
+
+      if (!response.body) {
+        throw new Error("Response body is empty");
+      }
+
+      // Объект для накопления суммарных данных
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const aggregatedResult: Record<string, any> = {};
+
+      // Чтение потокового ответа
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        // Добавляем новый chunk к буферу
+        const chunk = decoder.decode(value, { stream: true });
+        buffer += chunk;
+
+        // Обрабатываем полные JSON объекты из буфера
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || ""; // Сохраняем неполную строку в буфере
+
+        for (const line of lines) {
+          if (line.trim()) {
+            try {
+              const jsonData = JSON.parse(line.trim());
+
+              // Суммируем данные по ключам
+              for (const [key, value] of Object.entries(jsonData)) {
+                if (typeof value === "number") {
+                  // Суммируем числовые значения
+                  aggregatedResult[key] = (aggregatedResult[key] || 0) + value;
+                } else if (Array.isArray(value)) {
+                  // Объединяем массивы
+                  aggregatedResult[key] = [...(aggregatedResult[key] || []), ...value];
+                } else if (typeof value === "object" && value !== null) {
+                  // Для объектов делаем глубокое слияние
+                  aggregatedResult[key] = { ...(aggregatedResult[key] || {}), ...value };
+                } else {
+                  // Для строк и других типов берем последнее значение
+                  aggregatedResult[key] = value;
+                }
+              }
+
+              // Обновляем состояние с промежуточными результатами
+              const currentResult = { ...aggregatedResult } as AggregateResponse;
+              set((state) => ({
+                aggregate: {
+                  ...state.aggregate,
+                  data: currentResult,
+                },
+              }));
+
+              // Вызываем callback
+              if (onProgress) {
+                onProgress(currentResult);
+              }
+            } catch (parseError) {
+              console.warn("Ошибка парсинга строки JSON:", line, parseError);
+            }
+          }
+        }
+      }
+
+      // Обрабатываем оставшиеся данные в буфере
+      if (buffer.trim()) {
+        try {
+          const jsonData = JSON.parse(buffer.trim());
+          for (const [key, value] of Object.entries(jsonData)) {
+            if (typeof value === "number") {
+              aggregatedResult[key] = (aggregatedResult[key] || 0) + value;
+            } else if (Array.isArray(value)) {
+              aggregatedResult[key] = [...(aggregatedResult[key] || []), ...value];
+            } else if (typeof value === "object" && value !== null) {
+              aggregatedResult[key] = { ...(aggregatedResult[key] || {}), ...value };
+            } else {
+              aggregatedResult[key] = value;
+            }
+          }
+        } catch (parseError) {
+          console.warn("Ошибка парсинга оставшихся данных:", buffer, parseError);
+        }
+      }
+
+      const finalResult = aggregatedResult as AggregateResponse;
+
+      // Сохранение в историю
+      useHistoryStore.getState().addItem({
+        fileName: file.name,
+        timestamp: new Date().toISOString(),
+        result: JSON.stringify(finalResult),
+        status: "success",
+      });
+
+      // Финальное обновление состояния
+      set({
+        aggregateDataLoading: false,
+        aggregate: {
+          data: finalResult,
+          error: null,
+          isStreaming: false,
+        },
+      });
+
+      // Финальный callback
+      if (onProgress) {
+        onProgress(finalResult);
+      }
+
+      return finalResult;
+    } catch (error) {
+      // Обработка ошибки
+      const errorInfo = ErrorHandler.handleApiError(error);
+      ErrorHandler.logError(error, "AggregateDataStream");
+
+      // Сохранение ошибки в историю
+      useHistoryStore.getState().addItem({
+        fileName: file.name,
+        timestamp: new Date().toISOString(),
+        result: null,
+        status: "error",
+        error: errorInfo.message || "Ошибка обработки файла",
+      });
+
+      set({
+        aggregateDataLoading: false,
+        aggregate: { data: null, error: errorInfo, isStreaming: false },
+      });
+
+      return null;
+    }
+  },
+
+  // Обновление промежуточных данных агрегации
+  updateAggregateData: (data?: AggregateResponse) => {
+    set((state) => ({
+      aggregate: {
+        ...state.aggregate,
+        ...(data && { data }),
+      },
+    }));
   },
 
   // Очистка данных отчетов
@@ -211,7 +413,7 @@ export const useApiStore = create<ApiState & ApiActions>((set, get) => ({
   // Очистка данных агрегации
   clearAggregateData: () => {
     set({
-      aggregate: { data: null, error: null },
+      aggregate: { data: null, error: null, isStreaming: false },
     });
   },
 
