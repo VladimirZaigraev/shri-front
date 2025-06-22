@@ -173,7 +173,7 @@ export const FileUploader: FC<FileUploaderProps> = ({
         title: uploadedFile.name,
         type: Type.error,
         subtitle: aggregate.error?.message || "Ошибка обработки файла",
-        disabled: false,
+        disabled: true,
       };
     }
 
@@ -183,7 +183,6 @@ export const FileUploader: FC<FileUploaderProps> = ({
         ...baseProps,
         title: uploadedFile.name,
         type: Type.done,
-        disabled: false,
       };
     }
 
@@ -199,7 +198,6 @@ export const FileUploader: FC<FileUploaderProps> = ({
         ...baseProps,
         title: uploadedFile.name,
         type: Type.process,
-        disabled: false,
       };
     }
 

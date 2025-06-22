@@ -29,7 +29,6 @@ export interface AggregateResponse {
   total_spend_galactic: number;
 }
 
-// Общие типы для HTTP статусов
 export type HttpStatus = 200 | 400 | 500;
 
 // Типы для обработки ошибок

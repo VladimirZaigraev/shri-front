@@ -19,6 +19,8 @@
 }
 
 .history_empty {
+  width: 100%;
+  text-align: center;
   composes: text-base-regular from global;
   color: var(--color-primary);
 }
