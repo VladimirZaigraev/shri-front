@@ -1,0 +1,137 @@
+/* Базовые стили для всех кнопок */
+.button {
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-blue, #007acc);
+  outline-offset: 2px;
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Основная кнопка */
+.baseButton {
+  composes: button;
+  composes: text-lg-medium from global;
+  padding: 15px 27px;
+  width: fit-content;
+  border-radius: 25px;
+  height: 80px;
+}
+
+/* Иконочная кнопка */
+.iconButton {
+  composes: button;
+  width: 70px;
+  height: 70px;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.uploadButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.uploadButton__wrapper {
+  display: flex;
+  gap: 10px;
+}
+
+.uploadButton__button {
+  composes: text-base-regular from global;
+  min-width: 331px;
+  height: 70px;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadButton__subtitle {
+  composes: text-base-regular from global;
+  color: var(--color-black);
+}
+
+/* Цветовые варианты */
+.green {
+  background-color: var(--color-green);
+  color: var(--color-black);
+}
+
+.green:hover:not(:disabled) {
+  background-color: var(--color-green-dark, #28a745);
+}
+
+.orange {
+  background-color: var(--color-orange);
+  color: var(--color-white);
+}
+
+.orange:hover:not(:disabled) {
+  background-color: var(--color-orange-dark, #e67e22);
+}
+
+.white {
+  background-color: var(--color-white);
+  color: var(--color-black);
+}
+
+.white:hover:not(:disabled) {
+  background-color: var(--color-gray-lightest, #f5f5f5);
+}
+
+.black {
+  background-color: var(--color-black);
+  color: var(--color-white);
+}
+
+.black:hover:not(:disabled) {
+  background-color: var(--color-gray-dark, #333);
+}
+
+.yellow {
+  background-color: var(--color-yellow);
+  color: var(--color-black);
+}
+
+.yellow:hover:not(:disabled) {
+  background-color: var(--color-yellow-dark, #f1c40f);
+}
+
+.primary {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+}
+
+.primary:hover:not(:disabled) {
+  background-color: var(--color-primary, #c5e1ff);
+}
+
+/* Состояние disabled */
+.disabled {
+  background-color: var(--color-gray-light, #e0e0e0) !important;
+  color: var(--color-gray, #888) !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}

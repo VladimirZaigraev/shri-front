@@ -1,0 +1,12 @@
+.csvGenerator {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  padding-top: 80px;
+}
+
+.title {
+  composes: text-base-regular from global;
+  color: var(--color-black);
+}

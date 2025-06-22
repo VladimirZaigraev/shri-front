@@ -1,0 +1,33 @@
+.modalWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalWrapper__content {
+  padding: 40px;
+  gap: 20px;
+  border-radius: 45px;
+  background-color: #fff;
+  max-width: 1000px;
+  max-height: 1111px;
+  position: relative;
+}
+
+.modalWrapper__content__button {
+  position: absolute;
+  top: -80px;
+  right: -80px;
+}
+
+.modalWrapper__content__main {
+  overflow-y: auto;
+  min-height: 200px;
+}

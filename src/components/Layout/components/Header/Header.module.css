@@ -1,0 +1,46 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 0 0 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  composes: container from global;
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.logoLink {
+  width: 268px;
+  height: 59px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+}
+
+.logoYoung {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 26px;
+  height: 26px;
+  top: 3.27px;
+  left: 232.38px;
+  object-fit: contain;
+}
+
+.headerTitle {
+  composes: text-base-medium from global;
+  background-color: var(--color-primary);
+  padding: 4.77px 6.37px 6.37px 6.37px;
+  color: var(--color-black);
+  text-transform: uppercase;
+}

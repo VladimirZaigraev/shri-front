@@ -1,0 +1,41 @@
+// Базовые типы для API ответов
+export interface ApiError {
+  error: string;
+}
+
+// Типы для GET /report endpoint
+export interface ReportParams {
+  size: number; // required - размер отчета в ГБ
+  withErrors?: "on" | "off"; // query, default: 'off' - включать ли ошибки в отчет
+  maxSpend?: number; // query, default: 1000 - максимальная сумма расходов
+}
+
+export type ReportResponse = string; // CSV файл как строка
+
+// Типы для POST /aggregate endpoint
+export interface AggregateParams {
+  rows: number; // required - количество строк для промежуточного агрегирования
+}
+
+export interface AggregateResponse {
+  // Здесь будет структура агрегированных данных
+  // Пока не видно из swagger точную структуру ответа
+  [key: string]: unknown;
+}
+
+// Общие типы для HTTP статусов
+export type HttpStatus = 200 | 400 | 500;
+
+// Типы для обработки ошибок
+export interface ApiErrorResponse {
+  status: HttpStatus;
+  message: string;
+  error?: ApiError;
+}
+
+// Тип для конфигурации API клиента
+export interface ApiClientConfig {
+  baseURL: string;
+  timeout?: number;
+  headers?: Record<string, string>;
+}

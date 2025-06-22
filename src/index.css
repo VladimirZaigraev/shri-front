@@ -1,0 +1,173 @@
+:root {
+  font-family: Roboto, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(55, 55, 55, 0.87);
+  background-color: #ffffff;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+
+  /* colors */
+  --color-primary: #cb81ff;
+  --color-secondary: #fce2ff;
+  --color-green: #2ae881;
+  --color-green-light: #d4fae6;
+  --color-orange: #fce300;
+  --color-black: #201b10;
+  --color-white: #ffffff;
+  --color-orange: #ff5f00;
+  --color-gray: #787878;
+  --color-gray-light: #c0c0c0;
+
+  /* font families */
+  --font-roboto: Roboto, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  /* font weights */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* font sizes */
+  --font-size-sm: 20px;
+  --font-size-base: 30px;
+  --font-size-lg: 35px;
+  --font-size-xl: 40px;
+
+  /* line heights */
+  --line-height: 110%;
+
+  /* letter spacing */
+  --letter-spacing: 0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1920px;
+  padding: 0 40px;
+  margin: 0 auto;
+}
+
+/* fonts */
+/* Typography utility classes */
+.text-large {
+  font-family: var(--font-roboto);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.text-base-regular {
+  font-family: var(--font-roboto);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.text-base-medium {
+  font-family: var(--font-roboto);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.text-base-bold {
+  font-family: var(--font-roboto);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.text-lg-medium {
+  font-family: var(--font-roboto);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+/* sizes */
+
+/* components */
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+/* Убираем стили по умолчанию для ссылок */
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+/* Кнопки по умолчанию */
+button {
+  border: none;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+/* Медиа-запросы для темной темы */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color: #f6f6f6;
+    background-color: #1a1a1a;
+  }
+
+  a:hover {
+    color: #747bff;
+  }
+}
+
+/* Скроллбар */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
