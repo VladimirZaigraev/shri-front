@@ -1,0 +1,29 @@
+.historyItem {
+  display: grid;
+  grid-template-columns: 1fr 40px;
+  gap: 40px;
+}
+
+.historyItem__info {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background-color: var(--color-primary);
+  border-radius: 40px;
+  padding: 16px 20px;
+  cursor: pointer;
+}
+
+.historyItem__info_box {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.historyItem__info_title {
+  composes: text-base-regular from global;
+  color: var(--color-black);
+}
+
+.historyItem__info_box_opacity {
+  opacity: 0.5;
+}

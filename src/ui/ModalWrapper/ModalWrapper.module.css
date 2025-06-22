@@ -30,4 +30,5 @@
 .modalWrapper__content__main {
   overflow-y: auto;
   min-height: 200px;
+  max-height: 60vh;
 }

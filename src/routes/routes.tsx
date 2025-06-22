@@ -1,6 +1,6 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import { Layout } from "../components";
-import { Analytics, CsvGenerator } from "../pages";
+import { Analytics, CsvGenerator, History } from "../pages";
 
 export const routes = createBrowserRouter([
   {
@@ -21,7 +21,7 @@ export const routes = createBrowserRouter([
       },
       {
         path: "/history",
-        element: <div>History</div>,
+        element: <History />,
       },
     ],
   },

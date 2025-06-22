@@ -1,8 +1,12 @@
 import React, { type FC } from "react";
 import styles from "./HighlightItem.module.css";
+import cn from "classnames";
+import { Color } from "../../HighlightList";
 
 interface HighlightItemProps {
-  [key: string]: string | number;
+  title: string;
+  value: string | number;
+  color?: Color;
 }
 
 enum ConvertTitle {
@@ -18,7 +22,7 @@ enum ConvertTitle {
 }
 
 export const HighlightItem: FC<HighlightItemProps> = (props) => {
-  const { title, value } = props;
+  const { title, value, color = "white" } = props;
 
   const createDate = (date: number) => {
     const dateObj = new Date(date);
@@ -31,7 +35,13 @@ export const HighlightItem: FC<HighlightItemProps> = (props) => {
   };
 
   return (
-    <div className={styles.highlightItem}>
+    <div
+      className={cn(
+        styles.highlightItem,
+        color === Color.white && styles.highlightItem_white,
+        color === Color.primaryLight && styles.highlightItem_primaryLight
+      )}
+    >
       <div className={styles.highlightItem__value}>
         {title === "big_spent_at" || title === "less_spent_at" ? createDate(value as number) : value}
       </div>

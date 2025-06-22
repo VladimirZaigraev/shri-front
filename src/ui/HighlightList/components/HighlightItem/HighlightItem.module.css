@@ -6,6 +6,12 @@
   border-radius: 24px;
   background-color: #ffff;
 }
+.highlightItem_white {
+  background-color: var(--color-white);
+}
+.highlightItem_primaryLight {
+  background-color: var(--color-primary-light);
+}
 
 .highlightItem__value {
   composes: text-large from global;

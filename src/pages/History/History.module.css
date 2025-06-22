@@ -1,0 +1,25 @@
+.history {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.history_list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.history_buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.history_empty {
+  composes: text-base-regular from global;
+  color: var(--color-primary);
+}

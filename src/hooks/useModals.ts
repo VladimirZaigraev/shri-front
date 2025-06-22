@@ -7,7 +7,7 @@ type ModalData = {
 
 export const useModals = () => {
   // Получаем состояние и actions из модального store
-  const { isOpen, modalData, modalType, openModal, closeModal } = useModalStore();
+  const { isOpen, modalData, openModal, closeModal } = useModalStore();
 
   const onOpenModal = (modalData: ModalData, isOpen: boolean = true) => {
     if (isOpen) {
@@ -24,7 +24,6 @@ export const useModals = () => {
   return {
     isOpen,
     modalData,
-    modalType,
     onOpenModal,
     onCloseModal,
     // Дополнительные методы для удобства

@@ -1,6 +1,5 @@
 import { create } from "zustand";
 
-// Типы для истории загрузок
 export interface HistoryItem {
   id: string;
   fileName: string;
